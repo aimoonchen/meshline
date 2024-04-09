@@ -25,7 +25,6 @@ const vertexShader = /* glsl */ `
   vec2 fix(vec4 i, float aspect) {
     vec2 res = i.xy / i.w;
     res.x *= aspect;
-  	vCounters = counters;
     return res;
   }
   
@@ -33,6 +32,7 @@ const vertexShader = /* glsl */ `
     float aspect = resolution.x / resolution.y;
     vColor = vec4(color, opacity);
     vUV = uv;
+    vCounters = counters;
   
     mat4 m = projectionMatrix * modelViewMatrix;
     vec4 finalPosition = m * vec4(position, 1.0) * aspect;
