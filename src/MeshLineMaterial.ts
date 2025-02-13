@@ -45,13 +45,18 @@ const vertexShader = /* glsl */ `
   
     float w = lineWidth * width;
   
-    vec2 dir1 = normalize(currentP - prevP);
-    vec2 dir2 = normalize(nextP - currentP);
-    vec2 dir = normalize(dir1 + dir2);
-
-    vec2 perp = vec2(-dir1.y, dir1.x);
-    vec2 miter = vec2(-dir.y, dir.x);
-    //w = clamp(w / dot(miter, perp), 0., 4. * lineWidth * width);
+    vec2 dir;
+    if (nextP == currentP) dir = normalize(currentP - prevP);
+    else if (prevP == currentP) dir = normalize(nextP - currentP);
+    else {
+      vec2 dir1 = normalize(currentP - prevP);
+      vec2 dir2 = normalize(nextP - currentP);
+      dir = normalize(dir1 + dir2);
+  
+      vec2 perp = vec2(-dir1.y, dir1.x);
+      vec2 miter = vec2(-dir.y, dir.x);
+      //w = clamp(w / dot(miter, perp), 0., 4. * lineWidth * width);
+    }
   
     //vec2 normal = (cross(vec3(dir, 0.), vec3(0., 0., 1.))).xy;
     vec4 normal = vec4(-dir.y, dir.x, 0., 1.);
@@ -144,7 +149,6 @@ export class MeshLineMaterial extends THREE.ShaderMaterial implements MeshLineMa
   useAlphaMap!: number
   color!: THREE.Color
   gradient!: THREE.Color[]
-  opacity: number = 1
   resolution!: THREE.Vector2
   sizeAttenuation!: number
   dashArray!: number
@@ -153,7 +157,6 @@ export class MeshLineMaterial extends THREE.ShaderMaterial implements MeshLineMa
   useDash!: number
   useGradient!: number
   visibility!: number
-  alphaTest: number = 0
   repeat!: THREE.Vector2
 
   constructor(parameters: MeshLineMaterialParameters) {
